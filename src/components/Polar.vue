@@ -225,9 +225,9 @@ export default {
               r: (val.value / intervalInfo.max) * this.radius,
               r0: 0,
               startAngle:
-                shape.startAngle + angle * index + (Math.PI * 2) / 360,
+                shape.startAngle + angle * index + (Math.PI * 1) / 360,
               endAngle:
-                shape.startAngle + angle * (index + 1) - (Math.PI * 2) / 360
+                shape.startAngle + angle * (index + 1) - (Math.PI * 1) / 360
             },
             style: {
               fill: this.barStyle.normal.fill
