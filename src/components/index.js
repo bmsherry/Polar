@@ -1,6 +1,7 @@
 import SherryPolar from "./Polar"
+import SherryPieCustomLabelLine from "./PieCustomLabelLine"
 
-const components = [SherryPolar];
+const components = [SherryPolar,SherryPieCustomLabelLine];
 export default {
     install(Vue,options){
         components.forEach(component=>{
