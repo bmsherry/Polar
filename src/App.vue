@@ -1,16 +1,21 @@
 <template>
   <div id="app">
-    <Polar/>
+    <Sherry-Polar :datas="datas"></Sherry-Polar>
   </div>
 </template>
 
 <script>
-import Polar from "./components/Polar.vue";
-
 export default {
   name: "app",
-  components: {
-    Polar
+  data() {
+    return {
+      datas: [
+        { value: 12, name: "测试1" },
+        { value: 5, name: "测试2" },
+        { value: 52, name: "测试3" },
+        { value: 0, name: "测试4" }
+      ]
+    };
   }
 };
 </script>

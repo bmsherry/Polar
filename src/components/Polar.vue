@@ -21,7 +21,13 @@
 <script>
 import zrender from "zrender";
 export default {
-  name: "Polar",
+  name: "SherryPolar",
+  props: {
+    datas: {
+      type: Array,
+      default: () => []
+    },
+  },
   data() {
     return {
       zr: null,
@@ -32,12 +38,6 @@ export default {
         lineDash: [3]
       },
       interval: 5,
-      datas: [
-        { value: 12, name: "测试1" },
-        { value: 22, name: "测试2" },
-        { value: 52, name: "测试3" },
-        { value: 42, name: "测试4" }
-      ],
       toolTip: {
         value: 0,
         title: ""
@@ -100,9 +100,13 @@ export default {
       }
       return { interval: arr, max: max };
     },
-    addpolar(
-      shape = { clockwise: true, startAngle: 0, endAngle: Math.PI / 2 }
-    ) {
+    addpolar(shape) {
+      let mergeShape = {
+        clockwise: true,
+        startAngle: 0,
+        endAngle: Math.PI / 2
+      };
+      zrender.util.merge(mergeShape, shape, true);
       const self = this;
       const intervalInfo = this.intervalInstance(this.data);
       const group = new zrender.Group();
@@ -130,9 +134,9 @@ export default {
         style: lineStyle
       });
       const len = this.datas.length;
-      const intervalSpan = shape.endAngle - shape.startAngle;
+      const intervalSpan = mergeShape.endAngle - mergeShape.startAngle;
       let angle = intervalSpan / len;
-      let targetAngle = shape.startAngle + angle / 2;
+      let targetAngle = mergeShape.startAngle + angle / 2;
       for (let i = 0; i < len; i++) {
         group.add(
           new zrender.Line({
@@ -206,9 +210,9 @@ export default {
               cx: this.position.x,
               cy: this.position.y,
               r: this.radius - everyRInstance * index,
-              startAngle: shape.startAngle,
-              endAngle: shape.endAngle,
-              clockwise: shape.clockwise
+              startAngle: mergeShape.startAngle,
+              endAngle: mergeShape.endAngle,
+              clockwise: mergeShape.clockwise
             },
             cursor: "default",
             style: this.elementStyle
@@ -225,9 +229,11 @@ export default {
               r: (val.value / intervalInfo.max) * this.radius,
               r0: 0,
               startAngle:
-                shape.startAngle + angle * index + (Math.PI * 1) / 360,
+                mergeShape.startAngle + angle * index + (Math.PI * 1) / 360,
               endAngle:
-                shape.startAngle + angle * (index + 1) - (Math.PI * 1) / 360
+                mergeShape.startAngle +
+                angle * (index + 1) -
+                (Math.PI * 1) / 360
             },
             style: {
               fill: this.barStyle.normal.fill
@@ -250,7 +256,7 @@ export default {
             position: [
               this.position.x +
                 Math.cos(
-                  shape.startAngle +
+                  mergeShape.startAngle +
                     angle * (index + 1 / 2) -
                     (Math.PI * 2) / 360
                 ) *
@@ -258,7 +264,7 @@ export default {
                 3,
               this.position.y +
                 Math.sin(
-                  shape.startAngle +
+                  mergeShape.startAngle +
                     angle * (index + 1 / 2) -
                     (Math.PI * 2) / 360
                 ) *
@@ -295,8 +301,8 @@ export default {
               cy: this.position.y,
               r: this.radius,
               r0: 0,
-              startAngle: shape.startAngle + angle * index,
-              endAngle: shape.startAngle + angle * (index + 1)
+              startAngle: mergeShape.startAngle + angle * index,
+              endAngle: mergeShape.startAngle + angle * (index + 1)
             },
             invisible: true,
             z: 101,
