@@ -1,4 +1,4 @@
-# test
+# polar
 
 ## Project setup
 ```
