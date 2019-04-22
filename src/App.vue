@@ -16,11 +16,10 @@ export default {
         { value: 52, name: "测试3" },
         { value: 0, name: "测试4" }
       ],
-      labelLineDatas: [
-        { value: 10, name: "直接访问", percent: "10%" },
-        { value: 20, name: "邮件营销", percent: "20%" },
-        { value: 30, name: "联盟广告", percent: "30%" },
-        { value: 40, name: "测试", percent: "40%" }
+      labelLineDatas: [   
+        { value: 20, name: "警告", percent: "20%", key: "warning" },
+        { value: 10, name: "高风险", percent: "10%", key: "highrisk" },
+        { value: 70, name: "提示", percent: "70%", key: "prompt" }
       ]
     };
   }

@@ -4,6 +4,7 @@
 
 <script>
 import echarts from "echarts";
+import { deepClone } from "@/assets/js/utils";
 export default {
   name: "SherryPieCustomLabelLine",
   props: {
@@ -15,43 +16,37 @@ export default {
   data() {
     return {
       chart: null,
-      startAngle: -Math.PI / 2,
+      startAngle: -Math.PI / 2 + (Math.PI * 5) / 12,
       center: { x: 250, y: 250 },
       chartOptions: {
-        tooltip: {
-          show: false,
-          trigger: "item",
-          formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
         graphic: {
           elements: []
         },
         series: [
           {
-            name: "访问来源",
             type: "pie",
             label: {
               normal: {
                 show: true,
                 position: "inside",
+                fontSize: 14,
+                fontWeight: "bold",
+                color: "#fff",
                 formatter: function(params) {
                   return params.data.percent;
                 }
               }
             },
+            startAngle: 15,
             labelLine: {
               normal: {
                 show: false
               }
             },
-            tooltip: {
-              show: true,
-              formatter: "{a} <br/>{b}: {c} ({d}%)"
-            },
+            silent: true,
             data: []
           },
           {
-            name: "访问来源",
             type: "pie",
             cursor: "default",
             label: {
@@ -59,6 +54,7 @@ export default {
                 show: false
               }
             },
+            startAngle: 15,
             labelLine: {
               normal: {
                 show: false
@@ -70,28 +66,72 @@ export default {
           }
         ]
       },
-      radius: 100,
+      radius: 131,
       OFFSET: 40,
       LINELENGTH: 80,
       FONTHEIGHT: 20
     };
   },
   mounted() {
-    this.chartOptions.series.forEach((serie, index) => {
-      serie.data = this.datas;
-      if (index === 0) {
-        serie.radius = [this.radius - 50, this.radius - 20];
-      } else {
-        serie.radius = [this.radius - 10, this.radius - 0];
-      }
-    });
-    this.setLabelAndLine(this.datas);
-    this.chart = echarts.init(
-      document.getElementById("sherryPieCustomLabelLine")
-    );
-    this.chart.setOption(this.chartOptions);
+    if (this.datas.length > 0) {
+      this.init(this.datas);
+    } else {
+      this.startAngle = Math.PI / 4;
+      this.init([{ value: 0, name: "", percent: "100%", key: "nodata" }]);
+    }
   },
   methods: {
+    init(datas) {
+      this.chartOptions.series.forEach((serie, index) => {
+        const data = deepClone(datas);
+        let nodata = false;
+        if (index === 0) {
+          serie.data = data.map(val => {
+            val.itemStyle = {
+              color: this.getLinearColor(val.key),
+              shadowBlur: 10,
+              shadowOffsetX: 3,
+              shadowColor: "rgba(0,120,213,0.21)"
+            };
+            if (val.key === "nodata") {
+              nodata = true;
+              val.itemStyle.shadowColor = "rgba(204,204,204,1)";
+            }
+            return val;
+          });
+          if (nodata) {
+            serie.label.normal.show = false;
+          }
+          serie.radius = [this.radius - 74, this.radius - 17];
+        } else {
+          serie.data = data.map(val => {
+            val.itemStyle = {
+              color: this.getColor(val.key)
+            };
+            return val;
+          });
+          serie.radius = [this.radius - 3, this.radius - 0];
+        }
+      });
+      this.setLabelAndLine(datas);
+      this.addCircle();
+      this.chart = echarts.init(
+        document.getElementById("sherryPieCustomLabelLine")
+      );
+      this.chart.setOption(this.chartOptions);
+    },
+    addCircle() {
+      this.chartOptions.graphic.elements.push({
+        type: "circle",
+        shape: {
+          cx: this.center.x,
+          cy: this.center.y,
+          r: 30
+        },
+        style: { stroke: "#efefef", fill: "#ffffff" },
+        silent: true
+      });
+    },
     setLabelAndLine(data) {
       this.addPieLabel(data).forEach(label => {
         let offset = this.LINELENGTH;
@@ -121,7 +161,12 @@ export default {
           left: left,
           top: label._router.y - this.FONTHEIGHT,
           style: {
-            text: `${label._data.name}: ${label._data.value}`
+            text:
+              label._data.key === "nodata"
+                ? `${label._data.value}条`
+                : `${label._data.name}: ${label._data.value}条`,
+            font: 'bold 14px "Microsoft YaHei"',
+            fill: this.getColor(label._data.key)
           },
           silent: true
         });
@@ -179,6 +224,84 @@ export default {
       } // end of for
       // var maxCountForOneSide = parseInt(canvasHeight / LINEHEIGHT, 10);
       return halves;
+    },
+    getColor(key) {
+      let color;
+      switch (key) {
+        case "prompt":
+          color = "#0080E3";
+          break;
+        case "warning":
+          color = "#FAC117";
+          break;
+        case "highrisk":
+          color = "#FC433A";
+          break;
+        case "nodata":
+          color = "#CCCCCC";
+          break;
+        default:
+          break;
+      }
+      return color;
+    },
+    getLinearColor(key) {
+      let color = {
+        type: "linear"
+      };
+      switch (key) {
+        case "prompt":
+          color.colorStops = [
+            {
+              offset: 0,
+              color: "#007FE0" // 0% 处的颜色
+            },
+            {
+              offset: 1,
+              color: "#4BB0FF" // 100% 处的颜色
+            }
+          ];
+          break;
+        case "warning":
+          color.colorStops = [
+            {
+              offset: 0,
+              color: "#FFD453" // 0% 处的颜色
+            },
+            {
+              offset: 1,
+              color: "#FFB400" // 100% 处的颜色
+            }
+          ];
+          break;
+        case "highrisk":
+          color.colorStops = [
+            {
+              offset: 0,
+              color: "#FF342A" // 0% 处的颜色
+            },
+            {
+              offset: 1,
+              color: "#FD7D77" // 100% 处的颜色
+            }
+          ];
+          break;
+        case "nodata":
+          color.colorStops = [
+            {
+              offset: 0,
+              color: "#CCCCCC" // 0% 处的颜色
+            },
+            {
+              offset: 1,
+              color: "#EEEEEE" // 100% 处的颜色
+            }
+          ];
+          break;
+        default:
+          break;
+      }
+      return color;
     }
   }
 };
