@@ -2,6 +2,7 @@
   <div id="app">
     <Sherry-Polar :datas="datas"></Sherry-Polar>
     <Sherry-PieCustomLabelLine :datas="labelLineDatas"></Sherry-PieCustomLabelLine>
+    <Sherry-LineCustom></Sherry-LineCustom>
   </div>
 </template>
 
@@ -16,7 +17,7 @@ export default {
         { value: 52, name: "测试3" },
         { value: 0, name: "测试4" }
       ],
-      labelLineDatas: [   
+      labelLineDatas: [
         { value: 20, name: "警告", percent: "20%", key: "warning" },
         { value: 10, name: "高风险", percent: "10%", key: "highrisk" },
         { value: 70, name: "提示", percent: "70%", key: "prompt" }
