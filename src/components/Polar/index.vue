@@ -26,7 +26,7 @@ export default {
     datas: {
       type: Array,
       default: () => []
-    },
+    }
   },
   data() {
     return {
@@ -92,7 +92,9 @@ export default {
         }
         return { interval: arr, max: copyMax };
       }
-      max = Math.round(max / this.interval + max - (max % this.interval));
+      max = Math.round(
+        Math.ceil(max / this.interval) + max - (max % this.interval)
+      );
       const instance = Math.round(max / this.interval);
       const arr = [];
       for (let i = 0; i < this.interval + 1; i++) {

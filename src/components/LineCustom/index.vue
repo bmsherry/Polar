@@ -12,7 +12,15 @@ export default {
     return {
       chart: null,
       mock: [
-       
+        { time: "2019-03-01", eventNum: 22 },
+        { time: "2019-03-08", eventNum: 52 },
+        { time: "2019-03-15", eventNum: 32 },
+        { time: "2019-03-22", eventNum: 12 },
+        { time: "2019-03-29", eventNum: 122 },
+        { time: "2019-04-05", eventNum: 99 },
+        { time: "2019-04-12", eventNum: 0 },
+        { time: "2019-04-19", eventNum: 1 },
+        { time: "2019-04-26", eventNum: 3 }
       ],
       chartOptions: {
         grid: {
@@ -127,7 +135,7 @@ export default {
           formatter: function(params) {
             return `<div class="chart-tooltip">
             <div class="tootip-title">${params[0].data[0]}</div>
-            <div class="space-between"><span class="with-dot"></span> <span>${
+            <div class="space-between"><span><span class="with-dot"></span>事件数</span> <span>${
               params[0].data[1]
             }</span></div>
           </div>`;
@@ -196,8 +204,6 @@ export default {
         this.chartOptions.xAxis.min = this.mock[0].time;
         this.chartOptions.xAxis.max = this.mock[this.mock.length - 1].time;
         this.chartOptions.xAxis.interval = 3600 * 24 * 7000;
-      } else {
-        delete this.chartOptions.dataZoom;
       }
       this.chartOptions.series[0].data = this.mock.map(val => [
         val.time,
