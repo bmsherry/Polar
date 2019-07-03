@@ -1,5 +1,13 @@
 <template>
   <div id="app">
+    <Input
+      type="number"
+      v-model="inputScore"
+      placeholder="请输入分数0-99"
+      style="width: 300px"
+      @on-enter="enterScore"
+    />
+    <Sherry-DashBoard :score="score"></Sherry-DashBoard>
     <Sherry-Polar :datas="datas"></Sherry-Polar>
     <Sherry-PieCustomLabelLine :datas="labelLineDatas"></Sherry-PieCustomLabelLine>
     <Sherry-LineCustom></Sherry-LineCustom>
@@ -11,6 +19,8 @@ export default {
   name: "app",
   data() {
     return {
+      score: -1,
+      inputScore: "",
       datas: [
         { value: 12, name: "测试1" },
         { value: 5, name: "测试2" },
@@ -23,6 +33,11 @@ export default {
         { value: 70, name: "提示", percent: "70%", key: "prompt" }
       ]
     };
+  },
+  methods: {
+    enterScore() {
+      this.score = parseInt(this.inputScore);
+    }
   }
 };
 </script>
