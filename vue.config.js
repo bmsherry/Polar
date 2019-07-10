@@ -3,5 +3,13 @@ const BASE_URL = process.env.NODE_ENV === 'production'
     : './'
 
 module.exports = {
-    publicPath: BASE_URL
+    publicPath: BASE_URL,
+    chainWebpack: config => {
+        Object.assign(config, {
+            externals: {
+                ThreeBSP: "ThreeBSP",
+                THREE: "THREE"
+            }
+        })
+    }
 }

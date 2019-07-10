@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import TWEEN from "tween";
 import zrender from "zrender";
 export default {
   name: "DashBoardMain",
@@ -171,12 +172,12 @@ export default {
 
           style: {
             fill: new zrender.LinearGradient(0, 0, 1, 1, [
-              { offset: 0, color: "#EDF4FF" },
-              { offset: 1, color: "#ABC8F2" }
+              { offset: 0, color: "#f2f2f2" },
+              { offset: 1, color: "#e5e5e5" }
             ]),
             shadowBlur: 7,
             shadowOffsetY: 5,
-            shadowColor: "rgba(4,48,114,0.4)"
+            shadowColor: "rgba(153,153,153,0.4)"
           }
         })
       );
@@ -277,7 +278,7 @@ export default {
       if (this.zInstance) this.zInstance.refresh();
     },
     drawScore(orgScore) {
-      let score = 0;
+      // let score = 0;
       const requestAnimationFrame =
         window.requestAnimationFrame ||
         window.mozRequestAnimationFrame ||
@@ -340,45 +341,72 @@ export default {
       g.add(circle);
       this.zInstance.add(g);
       if (this.loop) {
-        // 缓动函数
-        const cubicInOut = function(k) {
-          if ((k *= 2) < 1) {
-            return 0.5 * k * k * k;
-          }
-          return 0.5 * ((k -= 2) * k * k + 2);
+        const animate = () => {
+          this.requestAnimationFrameID = requestAnimationFrame(animate); // js/RequestAnimationFrame.js needs to be included too.
+          TWEEN.update();
         };
-        const loop = () => {
-          if (orgScore >= score) {
-            score++;
+        let coords = { score: 0 };
+        const tween = new TWEEN.Tween(coords)
+          .to({ score: orgScore }, 800)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .onUpdate(() => {
             arc.attr({
               shape: {
-                endAngle:
-                  this.startAngle +
-                  cubicInOut(score / orgScore) * orgScore * oneForAngle
+                endAngle: this.startAngle + coords.score * oneForAngle
               }
             });
             circle.attr({
               shape: {
                 cx:
-                  r *
-                    Math.cos(
-                      this.startAngle +
-                        cubicInOut(score / orgScore) * orgScore * oneForAngle
-                    ) +
+                  r * Math.cos(this.startAngle + coords.score * oneForAngle) +
                   this.zInstanceStyle.width / 2,
                 cy:
-                  r *
-                    Math.sin(
-                      this.startAngle +
-                        cubicInOut(score / orgScore) * orgScore * oneForAngle
-                    ) +
+                  r * Math.sin(this.startAngle + coords.score * oneForAngle) +
                   this.zInstanceStyle.height / 2
               }
             });
-            this.requestAnimationFrameID = requestAnimationFrame(loop);
-          }
-        };
-        loop();
+          })
+          .start();
+        animate();
+        // 缓动函数
+        // const cubicInOut = function(k) {
+        //   if ((k *= 2) < 1) {
+        //     return 0.5 * k * k * k;
+        //   }
+        //   return 0.5 * ((k -= 2) * k * k + 2);
+        // };
+        // const loop = () => {
+        //   if (orgScore >= score) {
+        //     score++;
+        //     arc.attr({
+        //       shape: {
+        //         endAngle:
+        //           this.startAngle +
+        //           cubicInOut(score / orgScore) * orgScore * oneForAngle
+        //       }
+        //     });
+        //     circle.attr({
+        //       shape: {
+        //         cx:
+        //           r *
+        //             Math.cos(
+        //               this.startAngle +
+        //                 cubicInOut(score / orgScore) * orgScore * oneForAngle
+        //             ) +
+        //           this.zInstanceStyle.width / 2,
+        //         cy:
+        //           r *
+        //             Math.sin(
+        //               this.startAngle +
+        //                 cubicInOut(score / orgScore) * orgScore * oneForAngle
+        //             ) +
+        //           this.zInstanceStyle.height / 2
+        //       }
+        //     });
+        //     this.requestAnimationFrameID = requestAnimationFrame(loop);
+        //   }
+        // };
+        // loop();
       }
     }
   }

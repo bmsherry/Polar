@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <House></House>
     <Input
       type="number"
       v-model="inputScore"
@@ -15,8 +16,12 @@
 </template>
 
 <script>
+import House from "@/components/House";
 export default {
   name: "app",
+  components: {
+    House
+  },
   data() {
     return {
       score: -1,
