@@ -1,59 +1,59 @@
 <template>
   <div id="app">
-    <House></House>
-    <Input
-      type="number"
-      v-model="inputScore"
-      placeholder="请输入分数0-99"
-      style="width: 300px"
-      @on-enter="enterScore"
-    />
-    <Sherry-DashBoard :score="score"></Sherry-DashBoard>
-    <Sherry-Polar :datas="datas"></Sherry-Polar>
-    <Sherry-PieCustomLabelLine :datas="labelLineDatas"></Sherry-PieCustomLabelLine>
-    <Sherry-LineCustom></Sherry-LineCustom>
+    <Layout>
+      <Sider hide-trigger :style="{background: '#fff'}">
+        <Menu :active-name="name" theme="light" width="auto" @on-select="route" accordion>
+          <MenuItem name="home" to>Home</MenuItem>
+          <Submenu name="1">
+            <template slot="title">
+              <Icon type="ios-paper" />Three
+            </template>
+            <MenuItem name="cloth">Three-cloth</MenuItem>
+            <MenuItem name="shader">Three-shader</MenuItem>
+            <MenuItem name="threedworld">Three-dworld</MenuItem>
+            <MenuItem name="snow">Three-snow</MenuItem>
+          </Submenu>
+        </Menu>
+      </Sider>
+      <Layout :style="{padding: '24px'}">
+        <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
+          <router-view />
+        </Content>
+      </Layout>
+    </Layout>
   </div>
 </template>
 
 <script>
-import House from "@/components/House";
 export default {
   name: "app",
-  components: {
-    House
-  },
-  data() {
-    return {
-      score: -1,
-      inputScore: "",
-      datas: [
-        { value: 12, name: "测试1" },
-        { value: 5, name: "测试2" },
-        { value: 52, name: "测试3" },
-        { value: 0, name: "测试4" }
-      ],
-      labelLineDatas: [
-        { value: 20, name: "警告", percent: "20%", key: "warning" },
-        { value: 10, name: "高风险", percent: "10%", key: "highrisk" },
-        { value: 70, name: "提示", percent: "70%", key: "prompt" }
-      ]
-    };
+  computed: {
+    name() {
+      return this.$route.name;
+    }
   },
   methods: {
-    enterScore() {
-      this.score = parseInt(this.inputScore);
+    // 页面跳转
+    route(name) {
+      name && this.$router.push(name);
     }
   }
 };
 </script>
 
-<style>
+<style lang="less" scoped>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  height: 100%;
+  .ivu-layout {
+    min-height: 100%;
+    .ivu-layout-content {
+      min-height: 100%;
+    }
+  }
 }
 </style>

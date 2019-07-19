@@ -7,6 +7,7 @@ import TWEEN from "tween";
 const windowPNG = require("@/assets/image/window.png");
 const rightDoorPNG = require("@/assets/image/rightdoor.png");
 const rightDoorReversePNG = require("@/assets/image/rightdoor_reverse.png");
+const plantPNG = require("@/assets/image/plant.png");
 export default {
   name: "house",
   data() {
@@ -140,6 +141,11 @@ export default {
       this.drawWindow();
       this.drawDoor();
       this.drawDoorWall();
+      // 画4个花盆
+      this.drawPlant([21, 0, 37]);
+      this.drawPlant([21, 0, -37]);
+      this.drawPlant([-21, 0, 37]);
+      this.drawPlant([-21, 0, -37]);
       this.scene.add(this.house);
     },
     drawFloor() {
@@ -295,6 +301,31 @@ export default {
       door_frame.geometry.buffersNeedUpdate = true;
       door_frame.geometry.uvsNeedUpdate = true;
       this.house.add(door_frame);
+    },
+    drawPlant(position) {
+      const plant = new THREE.Object3D();
+      const geometry = new THREE.CylinderBufferGeometry(2, 1, 2, 22);
+      const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+      const cylinder = new THREE.Mesh(geometry, material);
+      cylinder.position.set(0, 2, 0);
+      plant.add(cylinder);
+
+      const leafTexture = new THREE.TextureLoader().load(plantPNG);
+      const leafMaterial = new THREE.MeshBasicMaterial({
+        map: leafTexture,
+        side: THREE.DoubleSide,
+        transparent: true
+      });
+      const geom = new THREE.PlaneGeometry(4, 8);
+      let leaf = null;
+      for (let i = 0; i < 4; i++) {
+        leaf = new THREE.Mesh(geom, leafMaterial);
+        leaf.position.y = 6;
+        leaf.rotation.y = -Math.PI / (i + 1);
+        plant.add(leaf);
+      }
+      plant.position.set(...position);
+      this.house.add(plant);
     }
   }
 };
